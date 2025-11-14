@@ -11,6 +11,7 @@ public struct DynamicArray<Element> {
     private var internalArray: InternalDynamicArray<Element>
     
     public var count: Int { internalArray.count }
+    public var isEmpty: Bool { internalArray.count == 0 }
     
     public init() {
         self.internalArray = InternalDynamicArray<Element>()
@@ -23,13 +24,15 @@ public struct DynamicArray<Element> {
     public subscript(index: Int) -> Element {
         get {
             precondition(index >= 0 && index < internalArray.count, "Index out of bounds")
-            return internalArray.get(at: index)!
+            return internalArray.get(at: index)
         }
         set {
             precondition(index >= 0 && index < internalArray.count, "Index out of bounds")
             internalArray.set(at: index, value: newValue)
         }
     }
+    
+    // TODO: Implement Copy-on-Write semantics
 }
 
 private final class InternalDynamicArray<Element> {
@@ -51,8 +54,6 @@ private final class InternalDynamicArray<Element> {
         deallocate()
     }
     
-    /// Appends a new element to the end of the dynamic array.
-    /// - Parameter value: The element to append.
     func append(_ value: Element) {
         if count == capacity {
             resize()
@@ -69,16 +70,14 @@ private final class InternalDynamicArray<Element> {
        
         newStorage.moveInitialize(from: storage, count: count)
         
-        deallocate()
+        freeRawStorage()
         
         storage = newStorage
         capacity = newCap
     }
     
-    func get(at index: Int) -> Element? {
-        guard index >= 0 && index < count else {
-            return nil
-        }
+    func get(at index: Int) -> Element {
+        guard index >= 0 && index < count else { fatalError("Index out of bounds") }
         
         return storage[index]
     }
@@ -93,6 +92,10 @@ private final class InternalDynamicArray<Element> {
 private extension InternalDynamicArray {
     func deallocate() {
         storage.deinitialize(count: count)
+        storage.deallocate()
+    }
+    
+    func freeRawStorage() {
         storage.deallocate()
     }
 }
