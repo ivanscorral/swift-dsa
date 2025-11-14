@@ -10,17 +10,19 @@ struct swift_dsa {
     }
     
     static func testDynamicArray() {
-        let dynamicIntArray = DynamicArray<Int>()
+        var dynamicIntArray: DynamicArray<Int> = DynamicArray<Int>()
         
         for i in 0..<20 {
             dynamicIntArray.append(i)
         }
         
         for i in 0..<dynamicIntArray.count {
-            if let value = dynamicIntArray.get(at: i) {
-                print("Value at index \(i): \(value)")
-            }
+            print("Value at index \(i): \(dynamicIntArray[i])")
         }
+        
+        // Test out of bounds access
+        
+        dynamicIntArray[20] = 0
         
     }
 }
