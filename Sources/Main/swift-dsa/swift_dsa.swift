@@ -10,18 +10,18 @@ struct swift_dsa {
     }
     
     static func testDynamicArray() {
-        let dynamicIntArray = DynamicArray<Int>()
+        var dynamicIntArray: DynamicArray<Int> = []
         
-        for i in 0..<20 {
-            dynamicIntArray.append(i)
-        }
-        
-        for i in 0..<dynamicIntArray.count {
-            if let value = dynamicIntArray.get(at: i) {
-                print("Value at index \(i): \(value)")
-            }
-        }
-        
+        dynamicIntArray.insert(10, at: 0)
+        dynamicIntArray.insert(100, at: dynamicIntArray.count)
+        dynamicIntArray.printElements()
+        dynamicIntArray.append(50)
+        dynamicIntArray.printElements()
+        let firstIndex100 = dynamicIntArray.firstIndex(of: 100)
+        print("Index of 100: \(String(describing: firstIndex100))")
+        print("Contains 50: \(dynamicIntArray.contains(50))")
+
     }
 }
+
 
