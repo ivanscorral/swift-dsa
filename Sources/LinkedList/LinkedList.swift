@@ -5,31 +5,35 @@
 //  Created by Ivan Sanchez Corral on 15/11/25.
 //
 
-public class LinkedList<Element: Equatable> {
+final public class LinkedList<Element> {
     public private(set) var head: Node<Element>?
     public private(set) var tail: Node<Element>?
     public private(set) var count: Int
     
-    init() {
+    public init() {
         self.head = nil
         self.tail = nil
         self.count = 0
     }
     
-    func append(_ value: Element) {
-        let newNode = Node(value)
+    public func append(_ node: Node<Element>) {
         if count == 0 {
-            head = newNode
+            head = node
             tail = head
         } else {
-            tail?.next = newNode
-            tail = newNode
+            tail?.next = node
+            tail = node
         }
         
         count += 1
     }
     
-    func prepend(_ value: Element) {
+    public func append(_ value: Element) {
+        let newNode = Node(value)
+        append(newNode)
+    }
+    
+    public func prepend(_ value: Element) {
         let newNode = Node(value)
         
         newNode.next = head
@@ -42,23 +46,17 @@ public class LinkedList<Element: Equatable> {
         count += 1
     }
     
-    func get(at index: Int) -> Element? {
-        guard index >= 0 && index < count else { return nil }
-        
-        return _node(at: index)?.value
+    public func element(at index: Int) -> Element? {
+       _node(at: index)?.value
     }
-    
-    func array() -> [Element] {
-        var result = [Element]()
-        for i in 0..<count {
-            result.append(_node(at: i)!.value)
-        }
-        
-        return result
-    }
-    
+}
+
+private extension LinkedList {
     func _node(at index: Int) -> Node<Element>? {
         guard index >= 0 && index < count else { return nil }
+        
+        if index == 0 { return head }
+        if index == count - 1 { return tail }
         
         var current = head
         for _ in 0..<index { current = current?.next }
@@ -67,18 +65,12 @@ public class LinkedList<Element: Equatable> {
     }
 }
 
-public class Node<Element: Equatable> {
-    public var value: Element
-    public var next: Node?
-    
-    init(_ value: Element) {
-        self.value = value
-        self.next = nil
-    }
-}
-
-extension Node: Equatable {
-    public static func == (lhs: Node<Element>, rhs: Node<Element>) -> Bool {
-        rhs === lhs
+extension LinkedList: Sequence {
+    public func makeIterator() -> AnyIterator<Element> {
+        var current = head
+        return AnyIterator {
+            defer { current = current?.next }
+            return current?.value
+        }
     }
 }
