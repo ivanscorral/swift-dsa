@@ -50,7 +50,7 @@ final class ArraysTests: XCTestCase {
         XCTAssertEqual(array.count, 10)
     }
     
-    func test_appendafterResize_elementsAreCorrect() {
+    func test_appendAfterResize_elementsAreCorrect() {
         var array = DynamicArray<Int>()
         
         for i in 0..<10 {
@@ -60,6 +60,21 @@ final class ArraysTests: XCTestCase {
         for i in 0..<10 {
             XCTAssertEqual(array[i], i)
         }
+    }
+    
+    func test_appendDuplicates_worksCorrectly() {
+        var array = DynamicArray<Int>()
+        
+        array.append(1)
+        array.append(1)
+        array.append(2)
+        array.append(2)
+        
+        XCTAssertEqual(array.count, 4)
+        XCTAssertEqual(array[0], 1)
+        XCTAssertEqual(array[1], 1)
+        XCTAssertEqual(array[2], 2)
+        XCTAssertEqual(array[3], 2)
     }
     
     func test_appendManyTimes_isStable() {
@@ -183,8 +198,76 @@ final class ArraysTests: XCTestCase {
     
     // MARK: Contains tests
     
+    func test_containsExistingElement_returnsTrue() {
+        let array: DynamicArray<Int> = [1, 2, 3, 4, 6]
+        
+        XCTAssertTrue(array.contains(1))
+        XCTAssertTrue(array.contains(3))
+        XCTAssertTrue(array.contains(6))
+    }
+    
+    func test_containsNonExistingElement_returnsFalse() {
+        let array: DynamicArray<Int> = [1, 2, 3, 4, 5]
+        
+        XCTAssertFalse(array.contains(0))
+        XCTAssertFalse(array.contains(-1))
+    }
+    
+    func test_containsWithDuplicates_returnsTrue() {
+        let array: DynamicArray<Int> = [1, 2, 2, 3, 4]
+        
+        XCTAssertTrue(array.contains(2))
+    }
+        
     // MARK: FirstIndex tests
     
+    func test_firstIndexForExistingElement_returnsCorrectIndex() {
+        let array: DynamicArray<Int> = [10, 20, 30, 20, 40]
+        
+        XCTAssertEqual(array.firstIndex(of: 10), 0)
+        XCTAssertEqual(array.firstIndex(of: 20), 1)
+        XCTAssertEqual(array.firstIndex(of: 30), 2)
+        XCTAssertEqual(array.firstIndex(of: 40), 4)
+    }
+    
+    func test_firstIndexForNonExistingElement_returnsNil() {
+        let array: DynamicArray<Int> = [10, 20, 30]
+        
+        XCTAssertNil(array.firstIndex(of: 99))
+        XCTAssertNil(array.firstIndex(of: -1))
+    }
+    
+    func test_firstIndexForDuplicateElements_returnsFirstIndex() {
+        let array: DynamicArray<Int> = [5, 10, 5, 20, 5]
+        
+        XCTAssertEqual(array.firstIndex(of: 5), 0)
+    }
+    
+    func test_firstIndexForEmptyArray_returnsNil() {
+        let array: DynamicArray<Int> = []
+        
+        XCTAssertNil(array.firstIndex(of: 1))
+    }
+    
     // MARK: Clear tests
+    
+    func test_clear_emptiesArray() {
+        let array: DynamicArray<Int> = [1, 2, 3, 4, 5]
+        
+        array.clear()
+        
+        XCTAssertEqual(array.count, 0)
+        XCTAssertEqual(array.isEmpty, true)
+    }
+    
+    func test_clearThenAppend_worksCorrectly() {
+        var array: DynamicArray<Int> = [1, 2, 3]
+        
+        array.clear()
+        array.append(42)
+        
+        XCTAssertEqual(array.count, 1)
+        XCTAssertEqual(array[0], 42)
+    }
     
 }
