@@ -1,3 +1,10 @@
+//
+//  ArraysTests.swift
+//  swift-dsa
+//
+//  Created by Ivan Sanchez Corral on 14/11/25.
+//
+
 import XCTest
 @testable import Arrays
 
